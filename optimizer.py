@@ -1,16 +1,34 @@
 import random
-from deap import creator, base, tools, algorithms
 
-# minimalized function
+from deap import creator, base, tools, algorithms
+from keras.layers import LSTM, Dense, Activation, Dropout
+from keras.models import Sequential
+
+from data import get_training_and_test_data
+
+x, y = get_training_and_test_data()
+
+
+# minimized function
 def optimize(params):
-    return [-abs(200 - params[0]) + -abs(500 - params[1]) + -abs(800 - params[2])]
+    model = Sequential()
+    model.add(LSTM(units=params[0] * 50, return_sequences=True, input_shape=(x.shape[1], x.shape[2])))
+    model.add(Dropout(0.2))
+    model.add(LSTM(params[1] * 50))
+    model.add(Dropout(0.2))
+    model.add(Dense(y.shape[1]))
+    model.add(Activation("softmax"))
+    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    model.summary()
+
+    return model.fit(x, y, epochs=2, batch_size=32, validation_split=0.15).history.get('val_acc')[-1]
+
 
 # function parameters
 toolbox = base.Toolbox()
-toolbox.register("attr_1", random.randint, 0, 1000)
-toolbox.register("attr_2", random.randint, 0, 1000)
-toolbox.register("attr_3", random.randint, 0, 1000)
-attrs = [toolbox.attr_1, toolbox.attr_2, toolbox.attr_3]
+toolbox.register("attr_1", random.randint, 1, 2)
+toolbox.register("attr_2", random.randint, 1, 2)
+attrs = [toolbox.attr_1, toolbox.attr_2]
 
 # evolutionary tools
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -44,4 +62,3 @@ top1 = tools.selBest(population, k=1)[0]
 
 # print best representative
 print(top1)
-
