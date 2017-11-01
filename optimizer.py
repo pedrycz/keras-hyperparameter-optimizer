@@ -8,20 +8,29 @@ from data import get_training_and_test_data
 
 x, y = get_training_and_test_data()
 
+cache = {}
+
 
 # minimized function
 def optimize(params):
+    current_params = (params[0] * 50, params[1] * 50)
+    print(current_params)
+
+    if current_params in cache:
+        return cache[current_params]
+
     model = Sequential()
-    model.add(LSTM(units=params[0] * 50, return_sequences=True, input_shape=(x.shape[1], x.shape[2])))
+    model.add(LSTM(units=current_params[0], return_sequences=True, input_shape=(x.shape[1], x.shape[2])))
     model.add(Dropout(0.2))
-    model.add(LSTM(params[1] * 50))
+    model.add(LSTM(current_params[1]))
     model.add(Dropout(0.2))
     model.add(Dense(y.shape[1]))
     model.add(Activation("softmax"))
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-    model.summary()
 
-    return model.fit(x, y, epochs=2, batch_size=32, validation_split=0.15).history.get('val_acc')[-1]
+    cache[current_params] = [model.fit(x, y, epochs=1, batch_size=32, validation_split=0.15).history.get('val_acc')[-1]]
+
+    return cache[current_params]
 
 
 # function parameters
@@ -35,8 +44,8 @@ creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMax)
 
 # evolutionary parameters
-population_size = 100
-generations = 300
+population_size = 6
+generations = 2
 crossover_probability = 0.05
 mating_probability = 0.5
 mutation_probability = 0.1
