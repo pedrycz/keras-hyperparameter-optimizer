@@ -15,7 +15,7 @@ cache = {}
 
 # minimized function
 def optimize(params):
-    current_params = (params[0] * 20, params[1] * 20)
+    current_params = (params[0] * 10, params[1] * 10)
     print
     print("Optimizing function for parameters: " + str(current_params))
 
@@ -34,7 +34,7 @@ def optimize(params):
     return cache[current_params]
 
 # function parameters
-attr_1 = partial(random.randint, 1, 5)
-attr_2 = partial(random.randint, 1, 5)
+attr_1 = partial(random.randint, 1, 10)
+attr_2 = partial(random.randint, 1, 10)
 attrs = [attr_1, attr_2]
 

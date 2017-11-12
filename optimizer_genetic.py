@@ -8,10 +8,10 @@ creator.create("Individual", list, fitness=creator.FitnessMax)
 
 # evolutionary parameters
 population_size = 10
-generations = 10
-crossover_probability = 0.05
-mating_probability = 0.2
-mutation_probability = 0.05
+generations = 5
+crossover_probability = 0.1
+mating_probability = 0.3
+mutation_probability = 0.1
 tournament_size = 2
 toolbox = base.Toolbox()
 toolbox.register("individual", tools.initCycle, creator.Individual, attrs)
