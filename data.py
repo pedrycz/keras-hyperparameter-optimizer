@@ -1,17 +1,23 @@
 import copy
+import random
 
 import numpy as np
 from keras.utils import np_utils
 
-def get_training_and_test_data():
-    shortest_sequence_length = 109
-    longest_sequence_length = 205
-    longest_sequence_length_with_trimmed_zeros = 182
-    number_of_character_classes = 20  # 'a''b''c''d''e''g''h''l''m''n''o''p''q''r''s''u''v''w''y''z'
-    zero_point_line_that_can_be_skipped = "0,0,0"
-    single_sequence_end_line = ",,"
-    padding_vector = [0.0, 0.0, 0.0]
+import arguments
 
+args = arguments.args
+
+shortest_sequence_length = 109
+longest_sequence_length = 205
+longest_sequence_length_with_trimmed_zeros = 182
+number_of_character_classes = 20  # 'a''b''c''d''e''g''h''l''m''n''o''p''q''r''s''u''v''w''y''z'
+zero_point_line_that_can_be_skipped = "0,0,0"
+single_sequence_end_line = ",,"
+padding_vector = [0.0, 0.0, 0.0]
+
+
+def get_data():
     x = []
     y = []
 
@@ -44,7 +50,20 @@ def get_training_and_test_data():
         for point_element in point.split(','):
             single_sequence[-1].append(float(point_element))
 
-    x = np.array(x)
-    y = np.array(y)
+    x_y = list(zip(x, y))
+    random.shuffle(x_y)
+    x, y = zip(*x_y)
 
-    return x, y
+    data_count = int(args.data_fraction * len(x))
+
+    x = x[:data_count]
+    y = y[:data_count]
+
+    test_count = int(args.test_fraction * len(x))
+
+    x_train = np.array(x[test_count:])
+    y_train = np.array(y[test_count:])
+    x_test = np.array(x[:test_count])
+    y_test = np.array(y[:test_count])
+
+    return x_train, y_train, x_test, y_test

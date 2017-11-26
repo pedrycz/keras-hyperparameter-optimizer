@@ -1,6 +1,9 @@
+import time
 from deap import creator, base, tools, algorithms
 
-from function import optimize, attrs, cache
+from function import optimize, attrs
+
+start = time.time()
 
 # evolutionary tools
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -23,6 +26,7 @@ toolbox.register("select", tools.selTournament, tournsize=tournament_size)
 
 # create population and run algorithm
 population = toolbox.population(n=population_size)
+
 for gen in range(generations):
     print
     print("GENRATION " + str(gen))
@@ -38,4 +42,5 @@ top1 = tools.selBest(population, k=1)[0]
 # print best representative
 print
 print("Best result for parameters: " + str(top1))
-
+end = time.time()
+print(end - start)
