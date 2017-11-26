@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH -p plgrid-gpu
-#SBATCH -t 5:00:00
-#SBATCH --gres=gpu:1
+#SBATCH -t 10:00:00
+#SBATCH --gres=gpu
 
 module purge
 
